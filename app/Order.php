@@ -41,12 +41,12 @@ class Order extends Model
         ];
     }
 
-    public static function forTickets($tickets, $email)
+    public static function forTickets($tickets, $email, $amount)
     {
         /** @var Order $order */
         $order = self::create([
             'email' => $email,
-            'amount' => $tickets->sum('price'),
+            'amount' => $amount,
         ]);
 
         foreach ($tickets as $ticket) {
