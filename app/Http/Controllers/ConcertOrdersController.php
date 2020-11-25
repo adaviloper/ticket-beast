@@ -39,7 +39,12 @@ class ConcertOrdersController extends Controller
                 request('payment_token')
             );
 
-            return response([], Response::HTTP_CREATED);
+            return response([
+                'email' => $order->email,
+                'ticket_quantity' => $order->ticketQuantity(),
+                'amount' => request('ticket_quantity') * $concert->ticket_price,
+            ], Response::HTTP_CREATED);
+
         } catch (PaymentFailedException $exception) {
             $order->cancel();
             return response([], Response::HTTP_UNPROCESSABLE_ENTITY);
