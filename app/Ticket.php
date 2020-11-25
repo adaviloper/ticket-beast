@@ -8,9 +8,19 @@ class Ticket extends Model
 {
     protected $guarded = [];
 
+    public function concert()
+    {
+        return $this->belongsTo(Concert::class);
+    }
+
     public function scopeAvailable($query)
     {
         return $query->whereNull('order_id');
+    }
+
+    public function getPriceAttribute()
+    {
+        return $this->concert->ticket_price;
     }
 
     public function release()
