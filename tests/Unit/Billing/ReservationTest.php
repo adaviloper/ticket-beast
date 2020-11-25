@@ -2,21 +2,19 @@
 
 namespace Unit\Billing;
 
-use App\Concert;
 use App\Reservation;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
 {
-    use DatabaseMigrations;
-
     /** @test */
     public function calculating_the_total_cost()
     {
-        /** @var Concert $concert */
-        $concert = factory(Concert::class)->create(['ticket_price' => 1200])->addTickets(3);
-        $tickets = $concert->findTickets(3);
+        $tickets = collect([
+            (object)['price' => 1200],
+            (object)['price' => 1200],
+            (object)['price' => 1200],
+        ]);
 
         $reservation = new Reservation($tickets);
 
