@@ -44,6 +44,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price' => 3250,
         ]);
+        $concert->addTickets(3);
 
         $response = $this->orderTickets($concert, [
             'email' => 'john@example.com',
@@ -131,10 +132,11 @@ class PurchaseTicketsTest extends TestCase
     public function cannot_purchase_tickets_to_an_unpublished_concert()
     {
         $concert = factory(Concert::class)->states('unpublished')->create();
+        $concert->addTickets(3);
 
         $this->response = $this->orderTickets($concert,[
             'email' => 'john@example.com',
-            'ticket_quantity' => 1,
+            'ticket_quantity' => 3,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
@@ -150,6 +152,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price' => 3250,
         ]);
+        $concert->addTickets(3);
 
         $response = $this->orderTickets($concert, [
             'email' => 'john@example.com',
@@ -160,5 +163,25 @@ class PurchaseTicketsTest extends TestCase
         $response->assertStatus(422);
         $order = $concert->orders()->where('email', 'john@example.com')->first();
         $this->assertNull($order);
+    }
+
+    /** @test */
+    public function cannot_purchase_more_tickets_than_remain()
+    {
+        $this->disableExceptionHandling();
+        $concert = factory(Concert::class)->states('published')->create();
+        $concert->addTickets(50);
+
+        $response = $this->orderTickets($concert,[
+            'email' => 'john@example.com',
+            'ticket_quantity' => 51,
+            'payment_token' => $this->paymentGateway->getValidTestToken(),
+        ]);
+
+        $response->assertStatus(422);
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        $this->assertNull($order);
+        $this->assertEquals(0, $this->paymentGateway->totalCharges());
+        $this->assertEquals(50, $concert->ticketsRemaining());
     }
 }
