@@ -180,9 +180,9 @@ class PurchaseTicketsTest extends TestCase
         ]);
 
         $response->assertStatus(422);
-        $this->assertFalse($concert->hasOrderFor('john@example.com'));
-        $this->assertEquals(0, $this->paymentGateway->totalCharges());
-        $this->assertEquals(50, $concert->ticketsRemaining());
+        self::assertFalse($concert->hasOrderFor('john@example.com'));
+        self::assertEquals(0, $this->paymentGateway->totalCharges());
+        self::assertEquals(50, $concert->ticketsRemaining());
     }
 
     /** @test */
@@ -195,25 +195,25 @@ class PurchaseTicketsTest extends TestCase
         ])->addTickets(3);
 
         $this->paymentGateway->beforeFirstCharge(function ($paymentGateway) use ($concert) {
-            $response = $this->orderTickets($concert,[
+            $response = $this->orderTickets($concert, [
                 'email' => 'personB@example.com',
                 'ticket_quantity' => 1,
-                'payment_token' => $paymentGateway->getValidTestToken(),
+                'payment_token' => $this->paymentGateway->getValidTestToken(),
             ]);
 
             $response->assertStatus(422);
             $this->assertFalse($concert->hasOrderFor('personB@example.com'));
-            $this->assertEquals(0, $paymentGateway->totalCharges());
+            $this->assertEquals(0, $this->paymentGateway->totalCharges());
         });
 
-        $response = $this->orderTickets($concert,[
+        $response = $this->orderTickets($concert, [
             'email' => 'personA@example.com',
             'ticket_quantity' => 3,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
-        $this->assertEquals(3600, $this->paymentGateway->totalCharges());
-        $this->assertTrue($concert->hasOrderFor('personA@example.com'));
-        $this->assertEquals(3, $concert->ordersFor('personA@example.com')->first()->ticketQuantity());
+        self::assertEquals(3600, $this->paymentGateway->totalCharges());
+        self::assertTrue($concert->hasOrderFor('personA@example.com'));
+        self::assertEquals(3, $concert->ordersFor('personA@example.com')->first()->ticketQuantity());
     }
 }
