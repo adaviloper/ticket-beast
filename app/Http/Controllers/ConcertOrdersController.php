@@ -53,6 +53,7 @@ class ConcertOrdersController extends Controller
             ], Response::HTTP_CREATED);
 
         } catch (PaymentFailedException $exception) {
+            $reservation->cancel();
             return response([], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (NotEnoughTicketsException $exception) {
             return response([], Response::HTTP_UNPROCESSABLE_ENTITY);

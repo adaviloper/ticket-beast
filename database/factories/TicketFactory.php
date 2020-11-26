@@ -25,6 +25,6 @@ $factory->define(App\Ticket::class, function (Faker\Generator $faker) {
 
 $factory->state(App\Ticket::class, 'reserved', static function (Faker\Generator $faker) {
     return [
-        'published_at' => Carbon::parse('-1 week'),
+        'reserved_at' => Carbon::now(),
     ];
 });
