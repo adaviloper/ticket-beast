@@ -4,6 +4,7 @@ namespace Unit;
 
 use App\Concert;
 use App\Order;
+use App\Ticket;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class TicketTest extends \Tests\TestCase
@@ -23,5 +24,17 @@ class TicketTest extends \Tests\TestCase
         $ticket->release();
 
         $this->assertNull($ticket->fresh()->order_id);
+    }
+
+    /** @test */
+    public function a_ticket_can_be_reserved()
+    {
+        /** @var Concert $concert */
+        $ticket = factory(Ticket::class)->create();
+        $this->assertNull($ticket->reserved_at);
+
+        $ticket->reserve();
+
+        $this->assertNotNull($ticket->fresh()->reserved_at);
     }
 }

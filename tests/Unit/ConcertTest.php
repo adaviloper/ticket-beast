@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use phpDocumentor\Reflection\Types\Context;
 use Tests\TestCase;
 
 class ConcertTest extends TestCase
@@ -120,5 +121,18 @@ class ConcertTest extends TestCase
         }
 
         self::fail('Order succeeded even though there were not enough tickets remaining.');
+    }
+
+    /** @test */
+    public function can_reserve_available_tickets()
+    {
+        /** @var Concert $concert */
+        $concert = factory(Concert::class)->create()->addTickets(3);
+        $this->assertEquals(3, $concert->ticketsRemaining());
+
+        $reservedTickets = $concert->reserveTickets(2);
+
+        $this->assertCount(2, $reservedTickets);
+        $this->assertEquals(1, $concert->ticketsRemaining());
     }
 }

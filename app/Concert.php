@@ -82,6 +82,11 @@ class Concert extends Model
             ->count();
     }
 
+    public function reserveTickets($quantity)
+    {
+        return $this->findTickets($quantity);
+    }
+
     public function findTickets($ticketQuantity)
     {
         $tickets = $this->tickets()

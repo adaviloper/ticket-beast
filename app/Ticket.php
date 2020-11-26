@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
@@ -21,6 +22,13 @@ class Ticket extends Model
     public function getPriceAttribute()
     {
         return $this->concert->ticket_price;
+    }
+
+    public function reserve()
+    {
+        $this->update([
+            'reserved_at' => Carbon::now(),
+        ]);
     }
 
     public function release()
