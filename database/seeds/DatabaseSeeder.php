@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,6 +23,6 @@ class DatabaseSeeder extends Seeder
             'date' => Carbon::parse('2016-12-13 8:00pm'),
             'ticket_price' => 3250,
             'additional_information' => "This concert is 19+.",
-        ]);
+        ])->addTickets(10);
     }
 }
