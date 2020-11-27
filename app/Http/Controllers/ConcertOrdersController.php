@@ -43,7 +43,7 @@ class ConcertOrdersController extends Controller
             );
 
 
-            $order = Order::forTickets($reservation->tickets(), $reservation->email(), $reservation->totalCost());
+            $order = $reservation->complete();
 
             return response([
                 'email' => $order->email,

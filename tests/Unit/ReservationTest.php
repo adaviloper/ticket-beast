@@ -2,13 +2,17 @@
 
 namespace Unit\Billing;
 
+use App\Concert;
 use App\Reservation;
 use App\Ticket;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Mockery;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /** @test */
     public function calculating_the_total_cost()
     {
@@ -61,5 +65,21 @@ class ReservationTest extends TestCase
         $reservation = new Reservation(collect(), self::JOHN_EMAIL);
 
         self::assertEquals(self::JOHN_EMAIL, $reservation->email());
+    }
+
+    /** @test */
+    public function completeing_a_reservation()
+    {
+        $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
+        $reservation = new Reservation(
+            factory(Ticket::class, 3)->create(['concert_id' => $concert->id]),
+            self::JOHN_EMAIL
+        );
+
+        $order = $reservation->complete();
+
+        self::assertEquals(self::JOHN_EMAIL, $order->email);
+        self::assertEquals(3, $order->ticketQuantity());
+        self::assertEquals(3600, $order->amount);
     }
 }

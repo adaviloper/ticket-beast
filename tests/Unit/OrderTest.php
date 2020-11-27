@@ -42,20 +42,4 @@ class OrderTest extends \Tests\TestCase
         self::assertEquals(3600, $order->amount);
         self::assertEquals(2, $concert->ticketsRemaining());
     }
-
-    /** @test */
-    public function creating_an_order_from_a_reservation()
-    {
-        $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
-        $reservation = new Reservation(
-            factory(Ticket::class, 3)->create(['concert_id' => $concert->id]),
-            self::JANE_EMAIL
-        );
-
-        $order = Order::fromReservation($reservation);
-
-        self::assertEquals(self::JANE_EMAIL, $order->email);
-        self::assertEquals(3, $order->ticketQuantity());
-        self::assertEquals(3600, $order->amount);
-    }
 }

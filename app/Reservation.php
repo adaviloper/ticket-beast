@@ -23,6 +23,11 @@ class Reservation
         return $this->tickets->sum('price');
     }
 
+    public function complete()
+    {
+        return Order::forTickets($this->tickets(), $this->email(), $this->totalCost());
+    }
+
     public function cancel()
     {
         foreach ($this->tickets as $ticket) {
