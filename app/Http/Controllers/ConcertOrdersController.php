@@ -35,8 +35,7 @@ class ConcertOrdersController extends Controller
         ]);
 
         try {
-            $tickets = $concert->reserveTickets(request('ticket_quantity'));
-            $reservation = new Reservation($tickets);
+            $reservation = $concert->reserveTickets(request('ticket_quantity'));
 
             $this->paymentGateway->charge(
                 $reservation->totalCost(),
@@ -44,7 +43,7 @@ class ConcertOrdersController extends Controller
             );
 
 
-            $order = Order::forTickets($tickets, request('email'), $reservation->totalCost());
+            $order = Order::forTickets($reservation->tickets(), request('email'), $reservation->totalCost());
 
             return response([
                 'email' => $order->email,

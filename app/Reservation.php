@@ -27,4 +27,9 @@ class Reservation
             $ticket->release();
         }
     }
+
+    public function tickets()
+    {
+        return $this->tickets;
+    }
 }
