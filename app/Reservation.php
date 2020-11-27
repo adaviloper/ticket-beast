@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Billing\PaymentGateway;
 use Illuminate\Support\Collection;
 
 class Reservation
@@ -23,8 +24,9 @@ class Reservation
         return $this->tickets->sum('price');
     }
 
-    public function complete()
+    public function complete(PaymentGateway $paymentGateway, $paymentToken)
     {
+        $paymentGateway->charge($this->totalCost(), $paymentToken);
         return Order::forTickets($this->tickets(), $this->email(), $this->totalCost());
     }
 
