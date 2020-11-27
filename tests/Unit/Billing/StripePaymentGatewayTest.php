@@ -14,6 +14,8 @@ use Tests\TestCase;
  */
 class StripePaymentGatewayTest extends TestCase
 {
+    use PaymentGatewayContractTests;
+
     protected $lastCharge;
 
     protected function setUp()
@@ -59,20 +61,6 @@ class StripePaymentGatewayTest extends TestCase
     protected function getPaymentGateway()
     {
         return new StripePaymentGateway(config('services.stripe.secret'));
-    }
-
-    /** @test */
-    public function charges_with_a_valid_payment_token_are_successful()
-    {
-        $paymentGateway = $this->getPaymentGateway();
-
-        $newCharges = $paymentGateway->newChargesDuring(static function ($paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
-        });
-
-
-        self::assertCount(1, $newCharges);
-        self::assertEquals(2500, $newCharges->sum());
     }
 
     /** @test */
