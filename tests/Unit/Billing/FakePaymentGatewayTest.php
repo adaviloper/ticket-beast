@@ -9,11 +9,15 @@ use Tests\TestCase;
 
 class FakePaymentGatewayTest extends TestCase
 {
+    protected function getPaymentGateway()
+    {
+        return new FakePaymentGateway();
+    }
+
     /** @test */
     public function charges_with_a_valid_payment_token_are_successful()
     {
-        $paymentGateway = new FakePaymentGateway();
-        $this->app->instance(PaymentGateway::class, $paymentGateway);
+        $paymentGateway = $this->getPaymentGateway();
 
         $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
 

@@ -4,6 +4,7 @@ namespace App\Billing;
 
 use Stripe\Charge;
 use Stripe\Exception\InvalidRequestException;
+use Stripe\Token;
 
 class StripePaymentGateway implements PaymentGateway
 {
@@ -15,6 +16,21 @@ class StripePaymentGateway implements PaymentGateway
     public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
+    }
+
+    public function getValidTestToken()
+    {
+        return Token::create(
+            [
+                'card' => [
+                    'number' => '4242424242424242',
+                    'exp_month' => 11,
+                    'exp_year' => 2021,
+                    'cvc' => '314',
+                ],
+            ],
+            ['api_key' => $this->apiKey]
+        )->id;
     }
 
     public function charge($amount, $token)
