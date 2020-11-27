@@ -7,6 +7,9 @@ use Stripe\Charge;
 use Stripe\StripeClient;
 use Tests\TestCase;
 
+/**
+ * @group Integration
+ */
 class StripePaymentGatewayTest extends TestCase
 {
     protected $lastCharge;
