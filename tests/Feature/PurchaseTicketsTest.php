@@ -52,7 +52,7 @@ class PurchaseTicketsTest extends TestCase
         ])->addTickets(3);
 
         $response = $this->orderTickets($concert, [
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 3,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
@@ -60,14 +60,14 @@ class PurchaseTicketsTest extends TestCase
         $response->assertStatus(201);
 
         $response->assertJson([
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 3,
             'amount' => 9750,
         ]);
 
         self::assertEquals(9750, $this->paymentGateway->totalCharges());
-        self::assertTrue($concert->hasOrdersFor('john@example.com'));
-        self::assertEquals(3, $concert->ordersFor('john@example.com')->first()->ticketQuantity());
+        self::assertTrue($concert->hasOrdersFor(self::JOHN_EMAIL));
+        self::assertEquals(3, $concert->ordersFor(self::JOHN_EMAIL)->first()->ticketQuantity());
     }
 
     /** @test */
@@ -103,7 +103,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create();
 
         $this->response = $this->orderTickets($concert,[
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
@@ -116,7 +116,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create();
 
         $this->response = $this->orderTickets($concert,[
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 0,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
@@ -130,7 +130,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create();
 
         $this->response = $this->orderTickets($concert,[
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 1,
         ]);
 
@@ -144,13 +144,13 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('unpublished')->create()->addTickets(3);
 
         $this->response = $this->orderTickets($concert,[
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 3,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
         $this->response->assertStatus(404);
-        self::assertFalse($concert->hasOrdersFor('john@example.com'));
+        self::assertFalse($concert->hasOrdersFor(self::JOHN_EMAIL));
         self::assertEquals(0, $this->paymentGateway->totalCharges());
     }
 
@@ -163,13 +163,13 @@ class PurchaseTicketsTest extends TestCase
         ])->addTickets(3);
 
         $response = $this->orderTickets($concert, [
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 3,
             'payment_token' => 'invalid-payment-token',
         ]);
 
         $response->assertStatus(422);
-        self::assertFalse($concert->hasOrdersFor('john@example.com'));
+        self::assertFalse($concert->hasOrdersFor(self::JOHN_EMAIL));
         self::assertEquals(3, $concert->ticketsRemaining());
     }
 
@@ -180,13 +180,13 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create()->addTickets(50);
 
         $response = $this->orderTickets($concert,[
-            'email' => 'john@example.com',
+            'email' => self::JOHN_EMAIL,
             'ticket_quantity' => 51,
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
         $response->assertStatus(422);
-        self::assertFalse($concert->hasOrdersFor('john@example.com'));
+        self::assertFalse($concert->hasOrdersFor(self::JOHN_EMAIL));
         self::assertEquals(0, $this->paymentGateway->totalCharges());
         self::assertEquals(50, $concert->ticketsRemaining());
     }

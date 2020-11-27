@@ -15,12 +15,12 @@ class OrderTest extends \Tests\TestCase
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create(['ticket_price' => 1200])->addTickets(5);
-        $order = $concert->orderTickets('jane@example.com', 5);
+        $order = $concert->orderTickets(self::JANE_EMAIL, 5);
 
         $result = $order->toArray();
 
         self::assertEquals([
-            'email' => 'jane@example.com',
+            'email' => self::JANE_EMAIL,
             'ticket_quantity' => 5,
             'amount' => 6000,
         ], $result);
@@ -33,9 +33,9 @@ class OrderTest extends \Tests\TestCase
         $concert = factory(Concert::class)->create()->addTickets(5);
 
         /** @var Order $order */
-        $order = Order::forTickets($concert->findTickets(3), 'jane@example.com', 3600);
+        $order = Order::forTickets($concert->findTickets(3), self::JANE_EMAIL, 3600);
 
-        self::assertEquals('jane@example.com', $order->email);
+        self::assertEquals(self::JANE_EMAIL, $order->email);
         self::assertEquals(3, $order->ticketQuantity());
         self::assertEquals(3600, $order->amount);
         self::assertEquals(2, $concert->ticketsRemaining());

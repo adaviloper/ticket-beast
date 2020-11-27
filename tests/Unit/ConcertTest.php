@@ -64,9 +64,9 @@ class ConcertTest extends TestCase
     {
         $concert = factory(Concert::class)->create()->addTickets(3);
 
-        $order = $concert->orderTickets('jane@example.com', 3);
+        $order = $concert->orderTickets(self::JANE_EMAIL, 3);
 
-        self::assertEquals('jane@example.com', $order->email);
+        self::assertEquals(self::JANE_EMAIL, $order->email);
         self::assertEquals(3, $order->tickets()->count());
     }
 
@@ -84,7 +84,7 @@ class ConcertTest extends TestCase
     public function tickets_remaining_does_not_include_tickets_associated_with_an_order()
     {
         $concert = factory(Concert::class)->create()->addTickets(50);
-        $concert->orderTickets('jane@example.com', 30);
+        $concert->orderTickets(self::JANE_EMAIL, 30);
 
         self::assertEquals(20, $concert->ticketsRemaining());
     }
@@ -95,9 +95,9 @@ class ConcertTest extends TestCase
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create()->addTickets(10);
         try {
-            $concert->orderTickets('jane@example.com', 30);
+            $concert->orderTickets(self::JANE_EMAIL, 30);
         } catch (NotEnoughTicketsException $exception) {
-            self::assertFalse($concert->hasOrdersFor('jane@example.com'));
+            self::assertFalse($concert->hasOrdersFor(self::JANE_EMAIL));
             self::assertEquals(10, $concert->ticketsRemaining());
             return;
         }
@@ -110,7 +110,7 @@ class ConcertTest extends TestCase
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create()->addTickets(10);
-        $concert->orderTickets('jane@example.com', 8);
+        $concert->orderTickets(self::JANE_EMAIL, 8);
 
         try {
             $concert->orderTickets('john@example.com', 3);
@@ -128,12 +128,12 @@ class ConcertTest extends TestCase
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create()->addTickets(3);
-        $this->assertEquals(3, $concert->ticketsRemaining());
+        self::assertEquals(3, $concert->ticketsRemaining());
 
-        $reservation = $concert->reserveTickets(2);
+        $reservation = $concert->reserveTickets(2, 'john@example.com');
 
-        $this->assertCount(2, $reservation->tickets());
-        $this->assertEquals(1, $concert->ticketsRemaining());
+        self::assertCount(2, $reservation->tickets());
+        self::assertEquals(1, $concert->ticketsRemaining());
     }
 
     /** @test */
@@ -141,16 +141,16 @@ class ConcertTest extends TestCase
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create()->addTickets(3);
-        $concert->orderTickets('jane@example.com', 2);
+        $concert->orderTickets(self::JANE_EMAIL, 2);
 
         try {
-            $concert->reserveTickets(2);
+            $concert->reserveTickets(2, self::JANE_EMAIL);
         } catch (NotEnoughTicketsException $exception) {
-            $this->assertEquals(1, $concert->ticketsRemaining());
+            self::assertEquals(1, $concert->ticketsRemaining());
             return;
         }
 
-        $this->fail('Reserving tickets succeeded even though the tickets were already sold.');
+        self::fail('Reserving tickets succeeded even though the tickets were already sold.');
     }
 
     /** @test */
@@ -158,15 +158,15 @@ class ConcertTest extends TestCase
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create()->addTickets(3);
-        $concert->reserveTickets(2);
+        $concert->reserveTickets(2, self::JOHN_EMAIL);
 
         try {
-            $concert->reserveTickets(2);
+            $concert->reserveTickets(2, self::JOHN_EMAIL);
         } catch (NotEnoughTicketsException $exception) {
-            $this->assertEquals(1, $concert->ticketsRemaining());
+            self::assertEquals(1, $concert->ticketsRemaining());
             return;
         }
 
-        $this->fail('Reserving tickets succeeded even though the tickets were already reserved.');
+        self::fail('Reserving tickets succeeded even though the tickets were already reserved.');
     }
 }
