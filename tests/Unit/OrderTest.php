@@ -1,14 +1,13 @@
 <?php
 
-namespace Unit;
+namespace Tests\Unit;
 
 use App\Concert;
 use App\Order;
-use App\Reservation;
-use App\Ticket;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 
-class OrderTest extends \Tests\TestCase
+class OrderTest extends TestCase
 {
     use DatabaseMigrations;
 

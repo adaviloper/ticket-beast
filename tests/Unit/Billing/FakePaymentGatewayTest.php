@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Billing;
+namespace Tests\Unit\Billing;
 
 use App\Billing\FakePaymentGateway;
 use App\Billing\PaymentFailedException;

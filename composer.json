@@ -1,15 +1,20 @@
 {
     "name": "laravel/laravel",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
         "php": ">=5.6.4",
         "laravel/framework": "5.4.*",
-        "zondicons/blade-bridge" : "^0.1.0"
+        "stripe/stripe-php": "^7.66",
+        "zondicons/blade-bridge": "^0.1.0"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper" : "^v2.4.3",
         "fzaninotto/faker": "~1.4",
         "laravel/homestead": "9.4.1",
         "mockery/mockery": "0.9.*",
@@ -28,7 +33,10 @@
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php"
-        ]
+        ],
+        "psr-4" : {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
         "post-root-package-install": [
@@ -43,6 +51,8 @@
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
             "php artisan optimize"
         ]
     },
