@@ -20,7 +20,7 @@ class ReservationTest extends TestCase
 
         $reservation = new Reservation($tickets);
 
-        $this->assertEquals(3600, $reservation->totalCost());
+        self::assertEquals(3600, $reservation->totalCost());
     }
 
     /** @test */

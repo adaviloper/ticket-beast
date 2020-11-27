@@ -11,20 +11,6 @@ class OrderTest extends \Tests\TestCase
     use DatabaseMigrations;
 
     /** @test */
-    public function tickets_are_release_when_an_order_is_cancelled()
-    {
-        /** @var Concert $concert */
-        $concert = factory(Concert::class)->create()->addTickets(10);
-        $order = $concert->orderTickets('jane@example.com', 5);
-        $this->assertEquals(5, $concert->ticketsRemaining());
-
-        $order->cancel();
-
-        $this->assertEquals(10, $concert->ticketsRemaining(), '');
-        $this->assertNull(Order::find($order->id));
-    }
-
-    /** @test */
     public function converting_to_an_array()
     {
         /** @var Concert $concert */
@@ -33,7 +19,7 @@ class OrderTest extends \Tests\TestCase
 
         $result = $order->toArray();
 
-        $this->assertEquals([
+        self::assertEquals([
             'email' => 'jane@example.com',
             'ticket_quantity' => 5,
             'amount' => 6000,
@@ -49,9 +35,9 @@ class OrderTest extends \Tests\TestCase
         /** @var Order $order */
         $order = Order::forTickets($concert->findTickets(3), 'jane@example.com', 3600);
 
-        $this->assertEquals('jane@example.com', $order->email);
-        $this->assertEquals(3, $order->ticketQuantity());
-        $this->assertEquals(3600, $order->amount);
-        $this->assertEquals(2, $concert->ticketsRemaining());
+        self::assertEquals('jane@example.com', $order->email);
+        self::assertEquals(3, $order->ticketQuantity());
+        self::assertEquals(3600, $order->amount);
+        self::assertEquals(2, $concert->ticketsRemaining());
     }
 }
