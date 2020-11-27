@@ -17,7 +17,7 @@ class FakePaymentGatewayTest extends TestCase
 
         $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
 
-        $this->assertEquals(2500, $paymentGateway->totalCharges());
+        self::assertEquals(2500, $paymentGateway->totalCharges());
     }
 
     /** @test */
@@ -30,7 +30,7 @@ class FakePaymentGatewayTest extends TestCase
             return;
         }
 
-        $this->fail();
+        self::fail();
     }
 
     /** @test */
@@ -47,7 +47,7 @@ class FakePaymentGatewayTest extends TestCase
         });
 
         $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
-        $this->assertEquals(1, $timesCallbackRan);
-        $this->assertEquals(5000, $paymentGateway->totalCharges());
+        self::assertEquals(1, $timesCallbackRan);
+        self::assertEquals(5000, $paymentGateway->totalCharges());
     }
 }
