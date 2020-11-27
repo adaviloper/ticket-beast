@@ -48,4 +48,31 @@ class StripePaymentGateway implements PaymentGateway
             throw new PaymentFailedException;
         }
     }
+
+    private function lastCharge()
+    {
+        return array_first(Charge::all(
+            ['limit' => 1], ['api_key' => $this->apiKey]
+        )['data']);
+    }
+
+    private function newChargesSince($charge = null)
+    {
+        $newCharges = Charge::all(
+            [
+                'ending_before' => $charge ? $charge->id : null,
+            ],
+            ['api_key' => $this->apiKey]
+        )['data'];
+
+        return collect($newCharges);
+    }
+
+    public function newChargesDuring($callback)
+    {
+        $lastCharge = $this->lastCharge();
+        $callback($this);
+        return $this->newChargesSince($lastCharge)
+            ->pluck('amount');
+    }
 }

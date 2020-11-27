@@ -66,7 +66,7 @@ class StripePaymentGatewayTest extends TestCase
     {
         $paymentGateway = $this->getPaymentGateway();
 
-        $newCharges = $paymentGateway->newChargesDuring(static function () use ($paymentGateway) {
+        $newCharges = $paymentGateway->newChargesDuring(static function ($paymentGateway) {
             $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
         });
 
