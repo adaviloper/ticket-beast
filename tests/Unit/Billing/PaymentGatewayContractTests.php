@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Billing;
 
+use App\Billing\PaymentFailedException;
+
 trait PaymentGatewayContractTests
 {
     abstract protected function getPaymentGateway();
@@ -33,5 +35,22 @@ trait PaymentGatewayContractTests
 
         self::assertCount(2, $newCharges);
         self::assertEquals([5000, 4000], $newCharges->all());
+    }
+
+    /** @test */
+    public function charges_with_a_invalid_payment_token_fail(): void
+    {
+        $paymentGateway = $this->getPaymentGateway();
+
+        $newCharges = $paymentGateway->newChargesDuring(static function ($paymentGateway) {
+            try {
+                $paymentGateway->charge(2500, 'invalid-payment-token');
+            } catch (PaymentFailedException $exception) {
+                return;
+            }
+            self::fail('Charging with an invalid payment token did not throw a PaymentFailedException.');
+        });
+
+        self::assertCount(0, $newCharges);
     }
 }

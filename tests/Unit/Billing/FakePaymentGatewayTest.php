@@ -3,7 +3,6 @@
 namespace Tests\Unit\Billing;
 
 use App\Billing\FakePaymentGateway;
-use App\Billing\PaymentFailedException;
 use Tests\TestCase;
 
 class FakePaymentGatewayTest extends TestCase
@@ -13,19 +12,6 @@ class FakePaymentGatewayTest extends TestCase
     protected function getPaymentGateway()
     {
         return new FakePaymentGateway();
-    }
-
-    /** @test */
-    public function charges_with_a_invalid_payment_token_fail()
-    {
-        try {
-            $paymentGateway = new FakePaymentGateway();
-            $paymentGateway->charge(2500, 'invalid-payment-token');
-        } catch (PaymentFailedException $exception) {
-            return;
-        }
-
-        self::fail();
     }
 
     /** @test */
