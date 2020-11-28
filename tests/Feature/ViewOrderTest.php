@@ -25,5 +25,8 @@ class ViewOrderTest extends \Tests\TestCase
         $response = $this->get("orders/{$order->confirmation_number}");
 
         $response->assertStatus(200);
+        $response->assertViewHas('order', static function ($viewOrder) use ($order) {
+            return $order->id === $viewOrder->id;
+        });
     }
 }
