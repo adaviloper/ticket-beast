@@ -32,6 +32,7 @@ class ViewConcertListingTest extends TestCase
 
         $response = $this->get("/concerts/{$concert->id}");
 
+        $response->assertStatus(200);
         $response->assertSee('The Red Chord');
         $response->assertSee('with Animosity and Lethargy');
         $response->assertSee('December 13, 2016');
