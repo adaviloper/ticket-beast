@@ -6,16 +6,23 @@ class FakePaymentGateway implements PaymentGateway
 {
     private $beforeFirstChargeCallback;
 
+    /** @var \Illuminate\Support\Collection */
     private $charges;
+
+    /** @var \Illuminate\Support\Collection */
+    private $tokens;
 
     public function __construct()
     {
         $this->charges = collect();
+        $this->tokens = collect();
     }
 
-    public function getValidTestToken()
+    public function getValidTestToken($cardNumber = '4242424242424242')
     {
-        return 'valid-token';
+        return tap('fake-token_' . str_random(24), function ($token) use ($cardNumber) {
+            $this->tokens->put($token, $cardNumber);
+        });
     }
 
     public function charge($amount, $token)
@@ -26,15 +33,22 @@ class FakePaymentGateway implements PaymentGateway
             $callback($this);
         }
 
-        if ($token !== $this->getValidTestToken()) {
+        if (!$this->tokens->has($token)) {
             throw new PaymentFailedException;
         }
-        $this->charges[] = $amount;
+
+        return $this->charges[] = new Charge([
+            'amount' => $amount,
+            'card_last_four' => substr($this->tokens[$token], -4),
+        ]);
     }
 
     public function totalCharges()
     {
-        return $this->charges->sum();
+        return $this->charges
+            ->map
+            ->amount()
+            ->sum();
     }
 
     public function beforeFirstCharge($callback)
