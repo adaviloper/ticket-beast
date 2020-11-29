@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Billing\Charge;
 use App\Facades\OrderConfirmationNumber;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,13 +38,14 @@ class Order extends Model
         ];
     }
 
-    public static function forTickets($tickets, $email, $amount)
+    public static function forTickets($tickets, $email, Charge $charge)
     {
         /** @var Order $order */
         $order = self::create([
             'confirmation_number' => OrderConfirmationNumber::generate(),
             'email' => $email,
-            'amount' => $amount,
+            'amount' => $charge->amount(),
+            'card_last_four' => $charge->cardLastFour(),
         ]);
 
         $order->tickets()->saveMany($tickets);
