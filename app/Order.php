@@ -39,13 +39,12 @@ class Order extends Model
     {
         /** @var Order $order */
         $order = self::create([
+            'confirmation_number' => app(OrderConfirmationNumberGenerator::class)->generate(),
             'email' => $email,
             'amount' => $amount,
         ]);
 
-        foreach ($tickets as $ticket) {
-            $order->tickets()->save($ticket);
-        }
+        $order->tickets()->saveMany($tickets);
 
         return $order;
     }
