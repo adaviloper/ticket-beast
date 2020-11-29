@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Billing\FakePaymentGateway;
 use App\Billing\PaymentGateway;
 use App\Concert;
-use App\OrderConfirmationNumberGenerator;
+use App\Facades\OrderConfirmationNumber;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Mockery;
+use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
 
 class PurchaseTicketsTest extends TestCase
@@ -29,7 +29,7 @@ class PurchaseTicketsTest extends TestCase
         $this->app->instance(PaymentGateway::class, $this->paymentGateway);
     }
 
-    public function orderTickets($concert, $params)
+    public function orderTickets($concert, $params): TestResponse
     {
         $savedRequest = $this->app['request'];
         $response = $this->postJson("concerts/{$concert->id}/orders", $params);
@@ -38,21 +38,18 @@ class PurchaseTicketsTest extends TestCase
         return $response;
     }
 
-    public function assertValidationError($field)
+    public function assertValidationError($field): void
     {
         $this->response->assertStatus(422);
         self::assertArrayHasKey($field, $this->response->decodeResponseJson());
     }
 
     /** @test */
-    public function customer_can_purchase_tickets_to_a_published_concert()
+    public function customer_can_purchase_tickets_to_a_published_concert(): void
     {
         $this->disableExceptionHandling();
 
-        $orderConfirmationNumberGenerator = Mockery::mock(OrderConfirmationNumberGenerator::class, [
-            'generate' => 'ORDER_CONFIRMATION_1234',
-        ]);
-        $this->app->instance(OrderConfirmationNumberGenerator::class, $orderConfirmationNumberGenerator);
+        OrderConfirmationNumber::shouldReceive('generate')->andReturn(self::GOOD_ORDER_CONFIRMATION_NUMBER);
 
         /** @var Concert $concert */
         $concert = factory(Concert::class)->states('published')->create([
@@ -68,10 +65,14 @@ class PurchaseTicketsTest extends TestCase
         $response->assertStatus(201);
 
         $response->assertJson([
-            'confirmation_number' => 'ORDER_CONFIRMATION_1234',
+            'confirmation_number' => self::GOOD_ORDER_CONFIRMATION_NUMBER,
             'email' => self::JOHN_EMAIL,
-            'ticket_quantity' => 3,
             'amount' => 9750,
+            'tickets' => [
+                ['code' => 'TICKET_CODE_1'],
+                ['code' => 'TICKET_CODE_2'],
+                ['code' => 'TICKET_CODE_3'],
+            ],
         ]);
 
         self::assertEquals(9750, $this->paymentGateway->totalCharges());
@@ -80,7 +81,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function email_is_required_to_purchase_tickets()
+    public function email_is_required_to_purchase_tickets(): void
     {
         $concert = factory(Concert::class)->states('published')->create();
 
@@ -93,7 +94,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function email_must_be_valid_to_purchase_tickets()
+    public function email_must_be_valid_to_purchase_tickets(): void
     {
         $concert = factory(Concert::class)->states('published')->create();
 
@@ -107,7 +108,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function ticket_quantity_is_required_to_purchase_tickets()
+    public function ticket_quantity_is_required_to_purchase_tickets(): void
     {
         $concert = factory(Concert::class)->states('published')->create();
 
@@ -120,7 +121,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function ticket_quantity_is_at_least_1_to_purchase_tickets()
+    public function ticket_quantity_is_at_least_1_to_purchase_tickets(): void
     {
         $concert = factory(Concert::class)->states('published')->create();
 
@@ -134,7 +135,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function payment_token_is_required()
+    public function payment_token_is_required(): void
     {
         $concert = factory(Concert::class)->states('published')->create();
 
@@ -147,7 +148,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function cannot_purchase_tickets_to_an_unpublished_concert()
+    public function cannot_purchase_tickets_to_an_unpublished_concert(): void
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->states('unpublished')->create()->addTickets(3);
@@ -164,7 +165,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function an_order_is_not_created_if_payment_fails()
+    public function an_order_is_not_created_if_payment_fails(): void
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->states('published')->create([
@@ -183,7 +184,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function cannot_purchase_more_tickets_than_remain()
+    public function cannot_purchase_more_tickets_than_remain(): void
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->states('published')->create()->addTickets(50);
@@ -201,7 +202,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    public function cannot_purchase_tickets_another_customer_is_already_trying_to_purchase()
+    public function cannot_purchase_tickets_another_customer_is_already_trying_to_purchase(): void
     {
         $this->disableExceptionHandling();
         /** @var Concert $concert */

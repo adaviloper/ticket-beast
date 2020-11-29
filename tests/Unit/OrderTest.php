@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Billing\Charge;
-use App\Concert;
 use App\Order;
 use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -19,19 +18,27 @@ class OrderTest extends TestCase
     {
         /** @var Order $order */
         $order = factory(Order::class)->create([
-            'confirmation_number' => 'ORDER_CONFIRMATION_1234',
+            'confirmation_number' => self::GOOD_ORDER_CONFIRMATION_NUMBER,
             'amount' => 6000,
             'email' => self::JANE_EMAIL,
         ]);
-        $order->tickets()->saveMany(factory(Ticket::class, 5)->create());
+        $order->tickets()->saveMany([
+            factory(Ticket::class)->create(['code' => 'TICKET_CODE_1']),
+            factory(Ticket::class)->create(['code' => 'TICKET_CODE_2']),
+            factory(Ticket::class)->create(['code' => 'TICKET_CODE_3']),
+        ]);
 
         $result = $order->toArray();
 
         self::assertEquals([
-            'confirmation_number' => 'ORDER_CONFIRMATION_1234',
+            'confirmation_number' => self::GOOD_ORDER_CONFIRMATION_NUMBER,
             'email' => self::JANE_EMAIL,
-            'ticket_quantity' => 5,
             'amount' => 6000,
+            'tickets' => [
+                ['code' => 'TICKET_CODE_1'],
+                ['code' => 'TICKET_CODE_2'],
+                ['code' => 'TICKET_CODE_3'],
+            ],
         ], $result);
     }
 
@@ -57,9 +64,9 @@ class OrderTest extends TestCase
     /** @test */
     public function retrieving_an_order_by_confirmation_number(): void
     {
-        $order = factory(Order::class)->create(['confirmation_number' => 'ORDER_CONFIRMATION_1234']);
+        $order = factory(Order::class)->create(['confirmation_number' => self::GOOD_ORDER_CONFIRMATION_NUMBER]);
 
-        $foundOrder = Order::findByConfirmationNumber('ORDER_CONFIRMATION_1234');
+        $foundOrder = Order::findByConfirmationNumber(self::GOOD_ORDER_CONFIRMATION_NUMBER);
 
         self::assertTrue($foundOrder->is($order));
     }
@@ -68,7 +75,7 @@ class OrderTest extends TestCase
     public function retrieving_a_nonexistent_order_by_confirmation_number_throws_an_exception(): void
     {
         try {
-            Order::findByConfirmationNumber('NONEXISTENT_CONFIRMATION_NUMBER');
+            Order::findByConfirmationNumber(self::BAD_ORDER_CONFIRMATION_NUMBER);
         } catch (ModelNotFoundException $exception) {
             return;
         }

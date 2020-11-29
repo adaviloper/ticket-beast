@@ -34,7 +34,11 @@ class Order extends Model
             'amount' => $this->amount,
             'confirmation_number' => $this->confirmation_number,
             'email' => $this->email,
-            'ticket_quantity' => $this->ticketQuantity(),
+            'tickets' => $this->tickets->map(static function ($ticket) {
+                return [
+                    'code' => $ticket->code,
+                ];
+            })->all(),
         ];
     }
 
