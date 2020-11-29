@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Concert;
 use App\Order;
+use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -13,15 +14,20 @@ class OrderTest extends TestCase
     use DatabaseMigrations;
 
     /** @test */
-    public function converting_to_an_array()
+    public function converting_to_an_array(): void
     {
-        /** @var Concert $concert */
-        $concert = factory(Concert::class)->create(['ticket_price' => 1200])->addTickets(5);
-        $order = $concert->orderTickets(self::JANE_EMAIL, 5);
+        /** @var Order $order */
+        $order = factory(Order::class)->create([
+            'confirmation_number' => 'ORDER_CONFIRMATION_1234',
+            'amount' => 6000,
+            'email' => self::JANE_EMAIL,
+        ]);
+        $order->tickets()->saveMany(factory(Ticket::class, 5)->create());
 
         $result = $order->toArray();
 
         self::assertEquals([
+            'confirmation_number' => 'ORDER_CONFIRMATION_1234',
             'email' => self::JANE_EMAIL,
             'ticket_quantity' => 5,
             'amount' => 6000,
@@ -29,7 +35,7 @@ class OrderTest extends TestCase
     }
 
     /** @test */
-    public function creating_an_order_from_tickets_and_email_and_amount()
+    public function creating_an_order_from_tickets_and_email_and_amount(): void
     {
         /** @var Concert $concert */
         $concert = factory(Concert::class)->create()->addTickets(5);
@@ -54,10 +60,10 @@ class OrderTest extends TestCase
     }
 
     /** @test */
-    public function retrievining_a_nonexistant_order_by_confirmation_number_throws_an_exception()
+    public function retrieving_a_nonexistent_order_by_confirmation_number_throws_an_exception(): void
     {
         try {
-            Order::findByConfirmationNumber('NONEXISTANT_CONFIRMATION_NUMBER');
+            Order::findByConfirmationNumber('NONEXISTENT_CONFIRMATION_NUMBER');
         } catch (ModelNotFoundException $exception) {
             return;
         }

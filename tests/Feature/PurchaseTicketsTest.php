@@ -50,7 +50,7 @@ class PurchaseTicketsTest extends TestCase
         $this->disableExceptionHandling();
 
         $orderConfirmationNumberGenerator = Mockery::mock(OrderConfirmationNumberGenerator::class, [
-            'generate' => 'ORDER_CONFIRMATION_123',
+            'generate' => 'ORDER_CONFIRMATION_1234',
         ]);
         $this->app->instance(OrderConfirmationNumberGenerator::class, $orderConfirmationNumberGenerator);
 
