@@ -42,6 +42,7 @@ class ConcertOrdersController extends Controller
                 'email' => $order->email,
                 'ticket_quantity' => $order->ticketQuantity(),
                 'amount' => $order->amount,
+                'confirmation_number' => $order->confirmation_number,
             ], Response::HTTP_CREATED);
 
         } catch (PaymentFailedException $exception) {
