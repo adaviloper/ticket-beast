@@ -42,8 +42,14 @@ class RandomOrderConfirmationNumberGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function all_order_confirmation_numbers_must_be_unique(): void
+    public function confirmation_numbers_must_be_unique(): void
     {
+        $generator = new RandomOrderConfirmationNumberGenerator();
 
+        $confirmationNumbers = array_map(static function ($i) use ($generator) {
+            return $generator->generate();
+        }, range(1, 100));
+
+        self::assertCount(100, array_unique($confirmationNumbers));
     }
 }
