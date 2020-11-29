@@ -20,6 +20,7 @@ class CreateTicketsTable extends Migration
                 ->nullable();
             $table->dateTime('reserved_at')
                 ->nullable();
+            $table->string('code');
             $table->timestamps();
         });
     }
