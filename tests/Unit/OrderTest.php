@@ -7,6 +7,7 @@ use App\Order;
 use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Mockery;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -45,20 +46,24 @@ class OrderTest extends TestCase
     /** @test */
     public function creating_an_order_from_email_and_charge(): void
     {
-        /** @var Ticket $ticket */
-        $tickets = factory(Ticket::class, 3)->create();
         $charge = new Charge([
             'amount' => 3600,
             'card_last_four' => '1234',
+        ]);
+        /** @var Ticket $ticket */
+        $tickets = collect([
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
         ]);
 
         /** @var Order $order */
         $order = Order::forTickets($tickets, self::JANE_EMAIL, $charge);
 
         self::assertEquals(self::JANE_EMAIL, $order->email);
-        self::assertEquals(3, $order->ticketQuantity());
         self::assertEquals(3600, $order->amount);
         self::assertEquals('1234', $order->card_last_four);
+        $tickets->each->shouldHaveReceived('claimFor', [$order]);
     }
 
     /** @test */

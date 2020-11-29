@@ -38,12 +38,7 @@ class ConcertOrdersController extends Controller
             $reservation = $concert->reserveTickets(request('ticket_quantity'), request('email'));
             $order = $reservation->complete($this->paymentGateway, request('payment_token'));
 
-            return response([
-                'email' => $order->email,
-                'ticket_quantity' => $order->ticketQuantity(),
-                'amount' => $order->amount,
-                'confirmation_number' => $order->confirmation_number,
-            ], Response::HTTP_CREATED);
+            return response($order, Response::HTTP_CREATED);
 
         } catch (PaymentFailedException $exception) {
             $reservation->cancel();
