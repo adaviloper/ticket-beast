@@ -38,7 +38,7 @@ class TicketTest extends TestCase
     }
 
     /** @test */
-    public function a_ticket_can_be_claimed_for_an_order(): void
+    public function a_ticket_can_be_claimed_for_an_order()
     {
         $order = factory(Order::class)->create();
         $ticket = factory(Ticket::class)->create(['code' => null]);

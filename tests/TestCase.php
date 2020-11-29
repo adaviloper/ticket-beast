@@ -8,8 +8,8 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    const JOHN_EMAIL = 'john@example.com';
-    const JANE_EMAIL = 'jane@example.com';
+    protected const JOHN_EMAIL = 'john@example.com';
+    protected const JANE_EMAIL = 'jane@example.com';
 
     public const GOOD_ORDER_CONFIRMATION_NUMBER = 'ORDERCONFIRMATION1234';
     public const BAD_ORDER_CONFIRMATION_NUMBER = 'ORDERCONFIRMATION1234';
