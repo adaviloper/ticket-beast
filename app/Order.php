@@ -4,6 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin \Eloquent
+ */
 class Order extends Model
 {
     protected $guarded = [];
@@ -45,5 +48,10 @@ class Order extends Model
         }
 
         return $order;
+    }
+
+    public static function findByConfirmationNumber($confirmationNumber)
+    {
+        return self::where('confirmation_number', $confirmationNumber)->firstOrFail();
     }
 }

@@ -5,6 +5,9 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin \Eloquent
+ */
 class Ticket extends Model
 {
     protected $guarded = [];

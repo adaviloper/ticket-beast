@@ -6,6 +6,9 @@ use App\Exceptions\NotEnoughTicketsException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
+/**
+ * @mixin \Eloquent
+ */
 class Concert extends Model
 {
     protected $guarded = [];
