@@ -57,13 +57,6 @@ class Concert extends Model
         return $this->orders()->where('email', $customerEmail)->get();
     }
 
-    public function orderTickets($email, $ticketQuantity)
-    {
-        $tickets = $this->findTickets($ticketQuantity);
-
-        return $this->createOrder($tickets, $email);
-    }
-
     public function createOrder(Collection $tickets, $email)
     {
         return Order::forTickets($tickets, $email, $tickets->sum('price'));

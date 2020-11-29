@@ -19,5 +19,7 @@ $factory->define(App\Order::class, function (Faker\Generator $faker) {
     return [
         'amount' => 5250,
         'email' => 'somebody@factory.com',
+        'confirmation_number' => 'ORDER_CONFIRMATION_1234',
+        'card_last_four' => '1234',
     ];
 });
