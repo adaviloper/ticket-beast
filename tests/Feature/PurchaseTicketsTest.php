@@ -6,6 +6,7 @@ use App\Billing\FakePaymentGateway;
 use App\Billing\PaymentGateway;
 use App\Concert;
 use App\Facades\OrderConfirmationNumber;
+use App\Facades\TicketCode;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
@@ -50,6 +51,7 @@ class PurchaseTicketsTest extends TestCase
         $this->disableExceptionHandling();
 
         OrderConfirmationNumber::shouldReceive('generate')->andReturn(self::GOOD_ORDER_CONFIRMATION_NUMBER);
+        TicketCode::shouldReceive('generateFor')->andReturn('TICKET_CODE_1', 'TICKET_CODE_2', 'TICKET_CODE_3');
 
         /** @var Concert $concert */
         $concert = factory(Concert::class)->states('published')->create([
