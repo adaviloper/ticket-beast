@@ -9,6 +9,8 @@ use Mockery;
 
 abstract class TestCase extends BaseTestCase
 {
+    use CreatesApplication;
+
     protected const JOHN_EMAIL = 'john@example.com';
     protected const JANE_EMAIL = 'jane@example.com';
 
@@ -26,20 +28,6 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
-    }
-
-    /**
-     * Creates the application.
-     *
-     * @return \Illuminate\Foundation\Application
-     */
-    public function createApplication()
-    {
-        $app = require __DIR__.'/../bootstrap/app.php';
-
-        $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-
-        return $app;
     }
 
     public function disableExceptionHandling()
