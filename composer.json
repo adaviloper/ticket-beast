@@ -9,10 +9,11 @@
     "type": "project",
     "require": {
         "php": ">=7.2",
+        "hashids/hashids": "^2.0",
+        "laravel/dusk": "^1.1",
         "laravel/framework": "5.4.*",
         "stripe/stripe-php": "^7.66",
-        "zondicons/blade-bridge": "^0.1.0",
-        "hashids/hashids" : "^2.0"
+        "zondicons/blade-bridge": "^0.1.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper" : "^v2.4.3",

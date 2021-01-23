@@ -10,6 +10,7 @@
 Homestead.json
 Homestead.yaml
 .env
+.env.dusk.local
 .vagrant
 .phpstorm.meta.php
 _ide_helper.php
