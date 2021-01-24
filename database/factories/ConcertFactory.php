@@ -17,6 +17,9 @@ use Carbon\Carbon;
 
 $factory->define(App\Concert::class, function (Faker\Generator $faker) {
     return [
+        'user_id' => static function () {
+            return factory(\App\User::class)->create()->id;
+        },
         'title' => 'The Red Chord',
         'subtitle' => 'with Animosity and Lethargy',
         'date' => Carbon::parse('+2 weeks'),
