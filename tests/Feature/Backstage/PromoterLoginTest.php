@@ -5,8 +5,9 @@ namespace Tests\Feature\Backstage;
 use App\User;
 use Auth;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 
-class PromoterLoginTest extends \Tests\TestCase
+class PromoterLoginTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -64,6 +65,17 @@ class PromoterLoginTest extends \Tests\TestCase
         $response->assertSessionHasErrors('email');
         self::assertTrue(session()->hasOldInput('email'));
         self::assertFalse(session()->hasOldInput('password'));
+        self::assertFalse(Auth::check());
+    }
+
+    /** @test */
+    function logging_out_the_current_user(): void
+    {
+        Auth::login(factory(User::class)->create());
+
+        $response = $this->post('/logout');
+
+        $response->assertRedirect('/login');
         self::assertFalse(Auth::check());
     }
 }
