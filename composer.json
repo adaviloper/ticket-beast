@@ -16,12 +16,13 @@
         "zondicons/blade-bridge": "^0.1.0"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper" : "^v2.4.3",
+        "barryvdh/laravel-ide-helper": "^v2.4.3",
         "fzaninotto/faker": "~1.4",
         "laravel/homestead": "9.4.1",
-        "laravel/tinker" : "^1.0",
+        "laravel/tinker": "^1.0",
         "mockery/mockery": "1.0.0-alpha1",
         "phpunit/phpunit": "~5.0",
+        "staudenmeir/dusk-updater": "^1.1",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*"
     },

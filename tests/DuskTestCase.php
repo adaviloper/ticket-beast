@@ -10,6 +10,12 @@ abstract class DuskTestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected const JOHN_EMAIL = 'john@example.com';
+    protected const JANE_EMAIL = 'jane@example.com';
+
+    public const GOOD_ORDER_CONFIRMATION_NUMBER = 'ORDERCONFIRMATION1234';
+    public const BAD_ORDER_CONFIRMATION_NUMBER = 'ORDERCONFIRMATION1234';
+
     /**
      * Prepare for Dusk test execution.
      *
