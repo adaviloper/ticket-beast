@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Concert;
 use Illuminate\Http\Request;
 
-class ConcertController extends Controller
+class ConcertsController extends Controller
 {
     public function show($id)
     {
