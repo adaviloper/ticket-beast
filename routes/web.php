@@ -15,9 +15,11 @@ Route::get('', static function () {
     return 'Laravel';
 });
 
-Route::get('concerts/{id}', 'ConcertController@show');
+Route::get('concerts/{id}', 'ConcertsController@show');
 Route::post('concerts/{id}/orders', 'ConcertOrdersController@store');
 Route::get('orders/{confirmationNumber}', 'OrdersController@show');
 
 Route::get('login', 'Auth\LoginController@showLoginForm');
 Route::post('login', 'Auth\LoginController@login');
+
+Route::get('/backstage/concerts/new', 'Backstage\ConcertsController@create');
