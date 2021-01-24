@@ -27,4 +27,5 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Backstage', 'prefix' => 
     Route::get('concerts', 'ConcertsController@index');
     Route::get('concerts/new', 'ConcertsController@create')->name('backstage.concerts.new');
     Route::post('concerts', 'ConcertsController@store');
+    Route::get('concerts/{id}/edit', 'ConcertsController@edit')->name('backstage.concerts.edit');
 });

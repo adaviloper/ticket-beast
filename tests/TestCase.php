@@ -5,7 +5,7 @@ namespace Tests;
 use App\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Mockery;
+use Illuminate\Foundation\Testing\TestResponse;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -27,7 +27,10 @@ abstract class TestCase extends BaseTestCase
     protected function setUp()
     {
         parent::setUp();
-        Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
+
+        TestResponse::macro('data', function ($key) {
+            return $this->original->getData()[$key];
+        });
     }
 
     public function disableExceptionHandling()
