@@ -44,10 +44,4 @@ abstract class TestCase extends BaseTestCase
             }
         });
     }
-    protected function from($url): TestCase
-    {
-        session()->setPreviousUrl(url($url));
-
-        return $this;
-    }
 }
