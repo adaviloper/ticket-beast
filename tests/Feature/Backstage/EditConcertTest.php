@@ -81,4 +81,59 @@ class EditConcertTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect('/login');
     }
+
+    /** @test */
+    public function promoters_can_edit_their_own_unpublished_concerts(): void
+    {
+        $this->disableExceptionHandling();
+
+        $user = factory(User::class)->create();
+        /** @var Concert $concert */
+        $concert = factory(Concert::class)
+            ->create([
+                'user_id' => $user->id,
+                'title' => 'Old title',
+                'subtitle' => 'Old subtitle',
+                'additional_information' => 'Old additional information',
+                'date' => '2019-01-01',
+                'time' => '5:00pm',
+                'ticket_price' => 2000,
+                'venue' => 'Old venue',
+                'venue_address' => 'Old address',
+                'city' => 'Old city',
+                'state' => 'Old state',
+                'zip' => '00000',
+            ]);
+        self::assertFalse($concert->isPublished());
+
+        $response = $this->actingAs($user)->patch("backstage/concerts/{$concert->id}", [
+            'user_id' => $user->id,
+            'title' => 'New title',
+            'subtitle' => 'New subtitle',
+            'additional_information'=> 'New additional information',
+            'date' => '2020-12-12',
+            'time' => '8:00pm',
+            'ticket_price' => '72.50',
+            'venue' => 'New venue',
+            'venue_address' => 'New address',
+            'city' => 'New city',
+            'state' => 'New state',
+            'zip' => '99999',
+        ]);
+
+        $response->assertRedirect('backstage/concerts');
+
+        $freshConcert = tap($concert->fresh(), static function ($concert) {
+            self::assertEquals('New title', $concert->title);
+            self::assertEquals('New subtitle', $concert->subtitle);
+            self::assertEquals('New additional information', $concert->additional_information);
+            self::assertEquals( Carbon::parse('2020-12-12 8:00pm'), $concert->date);
+            self::assertEquals( 7250, $concert->ticket_price);
+            self::assertEquals('New venue', $concert->venue);
+            self::assertEquals('New address', $concert->venue_address);
+            self::assertEquals('New city', $concert->city);
+            self::assertEquals('New state', $concert->state);
+            self::assertEquals( '99999', $concert->zip);
+        });
+    }
 }
