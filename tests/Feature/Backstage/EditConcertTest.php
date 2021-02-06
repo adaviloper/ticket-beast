@@ -20,12 +20,13 @@ class EditConcertTest extends TestCase
             'additional_information'=> 'New additional information',
             'date' => '2020-12-12',
             'time' => '8:00pm',
-            'ticket_price' => '72.50',
             'venue' => 'New venue',
             'venue_address' => 'New address',
             'city' => 'New city',
             'state' => 'New state',
             'zip' => '99999',
+            'ticket_price' => '72.50',
+            'ticket_quantity' => '10',
         ], $overrides);
     }
 
@@ -181,12 +182,12 @@ class EditConcertTest extends TestCase
                 'subtitle' => 'Old subtitle',
                 'additional_information' => 'Old additional information',
                 'date' => Carbon::parse('2019-01-01 5:00pm'),
-                'ticket_price' => 2000,
                 'venue' => 'Old venue',
                 'venue_address' => 'Old address',
                 'city' => 'Old city',
                 'state' => 'Old state',
                 'zip' => '00000',
+                'ticket_price' => 2000,
             ]);
         self::assertFalse($concert->isPublished());
 
@@ -197,12 +198,13 @@ class EditConcertTest extends TestCase
             'additional_information'=> 'New additional information',
             'date' => '2020-12-12',
             'time' => '8:00pm',
-            'ticket_price' => '72.50',
             'venue' => 'New venue',
             'venue_address' => 'New address',
             'city' => 'New city',
             'state' => 'New state',
             'zip' => '99999',
+            'ticket_price' => '72.50',
+            'ticket_quantity' => '10'
         ]);
 
         $response->assertStatus(404);
@@ -211,12 +213,13 @@ class EditConcertTest extends TestCase
             self::assertEquals('Old subtitle', $concert->subtitle);
             self::assertEquals('Old additional information', $concert->additional_information);
             self::assertEquals( Carbon::parse('2019-01-01 5:00pm'), $concert->date);
-            self::assertEquals( 2000, $concert->ticket_price);
             self::assertEquals('Old venue', $concert->venue);
             self::assertEquals('Old address', $concert->venue_address);
             self::assertEquals('Old city', $concert->city);
             self::assertEquals('Old state', $concert->state);
             self::assertEquals( '00000', $concert->zip);
+            self::assertEquals( 2000, $concert->ticket_price);
+            self::assertEquals( 5, $concert->ticket_quantity);
         });
     }
 
@@ -250,12 +253,13 @@ class EditConcertTest extends TestCase
             'additional_information'=> 'New additional information',
             'date' => '2020-12-12',
             'time' => '8:00pm',
-            'ticket_price' => '72.50',
             'venue' => 'New venue',
             'venue_address' => 'New address',
             'city' => 'New city',
             'state' => 'New state',
             'zip' => '99999',
+            'ticket_price' => '72.50',
+            'ticket_quantity' => '10',
         ]);
 
         $response->assertStatus(403);
@@ -264,12 +268,13 @@ class EditConcertTest extends TestCase
             self::assertEquals('Old subtitle', $concert->subtitle);
             self::assertEquals('Old additional information', $concert->additional_information);
             self::assertEquals( Carbon::parse('2019-01-01 5:00pm'), $concert->date);
-            self::assertEquals( 2000, $concert->ticket_price);
             self::assertEquals('Old venue', $concert->venue);
             self::assertEquals('Old address', $concert->venue_address);
             self::assertEquals('Old city', $concert->city);
             self::assertEquals('Old state', $concert->state);
             self::assertEquals( '00000', $concert->zip);
+            self::assertEquals( 2000, $concert->ticket_price);
+            self::assertEquals( 5, $concert->ticket_quantity);
         });
     }
 
@@ -302,12 +307,13 @@ class EditConcertTest extends TestCase
             'additional_information'=> 'New additional information',
             'date' => '2020-12-12',
             'time' => '8:00pm',
-            'ticket_price' => '72.50',
             'venue' => 'New venue',
             'venue_address' => 'New address',
             'city' => 'New city',
             'state' => 'New state',
             'zip' => '99999',
+            'ticket_price' => '72.50',
+            'ticket_quantity' => '10',
         ]);
 
         $response->assertRedirect('login');
@@ -316,12 +322,13 @@ class EditConcertTest extends TestCase
             self::assertEquals('Old subtitle', $concert->subtitle);
             self::assertEquals('Old additional information', $concert->additional_information);
             self::assertEquals( Carbon::parse('2019-01-01 5:00pm'), $concert->date);
-            self::assertEquals( 2000, $concert->ticket_price);
             self::assertEquals('Old venue', $concert->venue);
             self::assertEquals('Old address', $concert->venue_address);
             self::assertEquals('Old city', $concert->city);
             self::assertEquals('Old state', $concert->state);
             self::assertEquals( '00000', $concert->zip);
+            self::assertEquals( 2000, $concert->ticket_price);
+            self::assertEquals( 5, $concert->ticket_quantity);
         });
     }
 

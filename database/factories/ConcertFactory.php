@@ -22,14 +22,15 @@ $factory->define(App\Concert::class, function (Faker\Generator $faker) {
         },
         'title' => 'The Red Chord',
         'subtitle' => 'with Animosity and Lethargy',
+        'additional_information' => 'For tickets, call (555) 555-5555',
         'date' => Carbon::parse('+2 weeks'),
-        'ticket_price' => 2000,
         'venue' => 'The Example Theater',
         'venue_address' => '123 Example Ln',
         'city' => 'Fakevill',
         'state' => 'ON',
         'zip' => '90210',
-        'additional_information' => 'For tickets, call (555) 555-5555',
+        'ticket_price' => 2000,
+        'ticket_quantity' => 5,
     ];
 });
 
