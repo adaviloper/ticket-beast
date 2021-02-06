@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 
 /**
  * @mixin \Eloquent
+ *
+ * @property int $id
  */
 class Concert extends Model
 {

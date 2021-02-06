@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * @mixin \Eloquent
+ *
+ * @property int $id
  */
 class User extends Authenticatable
 {
