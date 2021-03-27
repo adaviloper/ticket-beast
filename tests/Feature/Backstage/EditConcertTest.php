@@ -12,7 +12,7 @@ class EditConcertTest extends TestCase
 {
     use DatabaseMigrations;
 
-    private function validParams($overrides): array
+    private function validParams($overrides = []): array
     {
         return array_merge([
             'title' => 'New title',
@@ -27,6 +27,23 @@ class EditConcertTest extends TestCase
             'zip' => '99999',
             'ticket_price' => '72.50',
             'ticket_quantity' => '10',
+        ], $overrides);
+    }
+
+    private function oldAttributes($overrides = []): array
+    {
+        return array_merge([
+            'title' => 'Old title',
+            'subtitle' => 'Old subtitle',
+            'additional_information' => 'Old additional information',
+            'date' => Carbon::parse('2019-01-01 5:00pm'),
+            'venue' => 'Old venue',
+            'venue_address' => 'Old address',
+            'city' => 'Old city',
+            'state' => 'Old state',
+            'zip' => '00000',
+            'ticket_price' => 2000,
+            'ticket_quantity' => 5,
         ], $overrides);
     }
 
@@ -176,51 +193,16 @@ class EditConcertTest extends TestCase
         $otherUser = factory(User::class)->create();
         /** @var Concert $concert */
         $concert = factory(Concert::class)
-            ->create([
+            ->create($this->oldAttributes([
                 'user_id' => $otherUser->id,
-                'title' => 'Old title',
-                'subtitle' => 'Old subtitle',
-                'additional_information' => 'Old additional information',
-                'date' => Carbon::parse('2019-01-01 5:00pm'),
-                'venue' => 'Old venue',
-                'venue_address' => 'Old address',
-                'city' => 'Old city',
-                'state' => 'Old state',
-                'zip' => '00000',
-                'ticket_price' => 2000,
-            ]);
+            ]));
         self::assertFalse($concert->isPublished());
 
-        $response = $this->actingAs($user)->patch("backstage/concerts/{$concert->id}", [
-            'user_id' => $user->id,
-            'title' => 'New title',
-            'subtitle' => 'New subtitle',
-            'additional_information'=> 'New additional information',
-            'date' => '2020-12-12',
-            'time' => '8:00pm',
-            'venue' => 'New venue',
-            'venue_address' => 'New address',
-            'city' => 'New city',
-            'state' => 'New state',
-            'zip' => '99999',
-            'ticket_price' => '72.50',
-            'ticket_quantity' => '10'
-        ]);
+        $response = $this->actingAs($user)->patch("backstage/concerts/{$concert->id}", $this->validParams());
 
         $response->assertStatus(404);
-        tap($concert->fresh(), static function ($concert) {
-            self::assertEquals('Old title', $concert->title);
-            self::assertEquals('Old subtitle', $concert->subtitle);
-            self::assertEquals('Old additional information', $concert->additional_information);
-            self::assertEquals( Carbon::parse('2019-01-01 5:00pm'), $concert->date);
-            self::assertEquals('Old venue', $concert->venue);
-            self::assertEquals('Old address', $concert->venue_address);
-            self::assertEquals('Old city', $concert->city);
-            self::assertEquals('Old state', $concert->state);
-            self::assertEquals( '00000', $concert->zip);
-            self::assertEquals( 2000, $concert->ticket_price);
-            self::assertEquals( 5, $concert->ticket_quantity);
-        });
+
+        self::assertArraySubset($this->oldAttributes(['user_id' => $otherUser->id]), $concert->fresh()->getAttributes());
     }
 
     /** @test */
@@ -231,51 +213,15 @@ class EditConcertTest extends TestCase
         /** @var Concert $concert */
         $concert = factory(Concert::class)
             ->states('published')
-            ->create([
+            ->create($this->oldAttributes([
                 'user_id' => $user->id,
-                'title' => 'Old title',
-                'subtitle' => 'Old subtitle',
-                'additional_information' => 'Old additional information',
-                'date' => Carbon::parse('2019-01-01 5:00pm'),
-                'ticket_price' => 2000,
-                'venue' => 'Old venue',
-                'venue_address' => 'Old address',
-                'city' => 'Old city',
-                'state' => 'Old state',
-                'zip' => '00000',
-            ]);
+            ]));
         self::assertTrue($concert->isPublished());
 
-        $response = $this->actingAs($user)->patch("backstage/concerts/{$concert->id}", [
-            'user_id' => $user->id,
-            'title' => 'New title',
-            'subtitle' => 'New subtitle',
-            'additional_information'=> 'New additional information',
-            'date' => '2020-12-12',
-            'time' => '8:00pm',
-            'venue' => 'New venue',
-            'venue_address' => 'New address',
-            'city' => 'New city',
-            'state' => 'New state',
-            'zip' => '99999',
-            'ticket_price' => '72.50',
-            'ticket_quantity' => '10',
-        ]);
+        $response = $this->actingAs($user)->patch("backstage/concerts/{$concert->id}", $this->validParams());
 
         $response->assertStatus(403);
-        tap($concert->fresh(), static function ($concert) {
-            self::assertEquals('Old title', $concert->title);
-            self::assertEquals('Old subtitle', $concert->subtitle);
-            self::assertEquals('Old additional information', $concert->additional_information);
-            self::assertEquals( Carbon::parse('2019-01-01 5:00pm'), $concert->date);
-            self::assertEquals('Old venue', $concert->venue);
-            self::assertEquals('Old address', $concert->venue_address);
-            self::assertEquals('Old city', $concert->city);
-            self::assertEquals('Old state', $concert->state);
-            self::assertEquals( '00000', $concert->zip);
-            self::assertEquals( 2000, $concert->ticket_price);
-            self::assertEquals( 5, $concert->ticket_quantity);
-        });
+        self::assertArraySubset($this->oldAttributes(['user_id' => $user->id]), $concert->fresh()->getAttributes());
     }
 
     /** @test */
@@ -285,51 +231,15 @@ class EditConcertTest extends TestCase
         $user = factory(User::class)->create();
         /** @var Concert $concert */
         $concert = factory(Concert::class)
-            ->create([
+            ->create($this->oldAttributes([
                 'user_id' => $user->id,
-                'title' => 'Old title',
-                'subtitle' => 'Old subtitle',
-                'additional_information' => 'Old additional information',
-                'date' => Carbon::parse('2019-01-01 5:00pm'),
-                'ticket_price' => 2000,
-                'venue' => 'Old venue',
-                'venue_address' => 'Old address',
-                'city' => 'Old city',
-                'state' => 'Old state',
-                'zip' => '00000',
-            ]);
+            ]));
         self::assertFalse($concert->isPublished());
 
-        $response = $this->patch("backstage/concerts/{$concert->id}", [
-            'user_id' => $user->id,
-            'title' => 'New title',
-            'subtitle' => 'New subtitle',
-            'additional_information'=> 'New additional information',
-            'date' => '2020-12-12',
-            'time' => '8:00pm',
-            'venue' => 'New venue',
-            'venue_address' => 'New address',
-            'city' => 'New city',
-            'state' => 'New state',
-            'zip' => '99999',
-            'ticket_price' => '72.50',
-            'ticket_quantity' => '10',
-        ]);
+        $response = $this->patch("backstage/concerts/{$concert->id}", $this->validParams());
 
         $response->assertRedirect('login');
-        tap($concert->fresh(), static function ($concert) {
-            self::assertEquals('Old title', $concert->title);
-            self::assertEquals('Old subtitle', $concert->subtitle);
-            self::assertEquals('Old additional information', $concert->additional_information);
-            self::assertEquals( Carbon::parse('2019-01-01 5:00pm'), $concert->date);
-            self::assertEquals('Old venue', $concert->venue);
-            self::assertEquals('Old address', $concert->venue_address);
-            self::assertEquals('Old city', $concert->city);
-            self::assertEquals('Old state', $concert->state);
-            self::assertEquals( '00000', $concert->zip);
-            self::assertEquals( 2000, $concert->ticket_price);
-            self::assertEquals( 5, $concert->ticket_quantity);
-        });
+        self::assertArraySubset($this->oldAttributes(['user_id' => $user->id]), $concert->fresh()->getAttributes());
     }
 
     /** @test */
