@@ -13,13 +13,18 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Order;
+use App\Ticket;
 use Carbon\Carbon;
 
-$factory->define(App\Order::class, function (Faker\Generator $faker) {
-    return [
-        'amount' => 5250,
-        'email' => 'somebody@factory.com',
-        'confirmation_number' => 'ORDER_CONFIRMATION_1234',
-        'card_last_four' => '1234',
-    ];
-});
+class OrderFactory
+{
+    public static function createForConcert($concert, $overrides = [], $ticketQuantity = 1): Order
+    {
+        $order = factory(Order::class)->create($overrides);
+        $tickets = factory(Ticket::class, $ticketQuantity)->create(['concert_id' => $concert->id]);
+        $order->tickets()->saveMany($tickets);
+
+        return $order;
+    }
+}
