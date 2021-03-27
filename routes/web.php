@@ -32,5 +32,7 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Backstage', 'prefix' => 
 
     Route::post('published-concerts', 'PublishedConcertsController@store')->name('backstage.published-concerts.store');
     Route::get('/published-concerts/{id}/orders', 'PublishedConcertOrdersController@index')->name('backstage.published-concert-orders.index');
+
+    Route::get('/concerts/{id}/messages/new', 'ConcertMessagesController@create')->name('backstage.concert-messages.new');
 });
 
