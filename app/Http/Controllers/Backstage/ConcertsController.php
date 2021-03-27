@@ -64,7 +64,7 @@ class ConcertsController extends Controller
 
         $concert->publish();
 
-        return redirect()->route('concerts.show', $concert);
+        return redirect()->route('backstage.concerts.index');
     }
 
     public function update($id)

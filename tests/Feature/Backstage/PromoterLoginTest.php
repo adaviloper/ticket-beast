@@ -25,7 +25,7 @@ class PromoterLoginTest extends TestCase
             'password' => 'secret',
         ]);
 
-        $response->assertRedirect('/backstage/concerts/new');
+        $response->assertRedirect('/backstage/concerts');
         self::assertTrue(Auth::check());
         self::assertTrue(Auth::user()->is($user));
     }

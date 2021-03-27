@@ -24,7 +24,7 @@ class PromoterLoginTest extends DuskTestCase
                 ->type('email', self::JANE_EMAIL)
                 ->type('password', 'secret')
                 ->press('Log in')
-                ->assertPathIs('/backstage/concerts/new');
+                ->assertPathIs('/backstage/concerts');
         });
     }
 
