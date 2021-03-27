@@ -48,7 +48,7 @@ class ConcertsController extends Controller
             'ticket_quantity' => ['required', 'numeric', 'min:1'],
         ]);
 
-        $concert = Auth::user()->concerts()->create([
+        Auth::user()->concerts()->create([
             'title' => request('title'),
             'subtitle' => request('subtitle'),
             'additional_information' => request('additional_information'),
@@ -61,8 +61,6 @@ class ConcertsController extends Controller
             'ticket_price' => request('ticket_price') * 100,
             'ticket_quantity' => (int)request('ticket_quantity'),
         ]);
-
-        $concert->publish();
 
         return redirect()->route('backstage.concerts.index');
     }

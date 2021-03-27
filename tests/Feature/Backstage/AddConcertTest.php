@@ -79,7 +79,7 @@ class AddConcertTest extends TestCase
 
             self::assertTrue($concert->user->is($user));
 
-            self::assertTrue($concert->isPublished());
+            self::assertFalse($concert->isPublished());
 
             self::assertEquals('No Warning', $concert->title);
             self::assertEquals('with Cruel Hand and Backtrack', $concert->subtitle);
@@ -92,7 +92,7 @@ class AddConcertTest extends TestCase
             self::assertEquals('12345', $concert->zip);
             self::assertEquals(3250, $concert->ticket_price);
             self::assertEquals(75, $concert->ticket_quantity);
-            self::assertEquals(75, $concert->ticketsRemaining());
+            self::assertEquals(0, $concert->ticketsRemaining());
         });
     }
 
