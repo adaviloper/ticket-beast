@@ -92,6 +92,7 @@ class AddConcertTest extends TestCase
             self::assertEquals('ON', $concert->state);
             self::assertEquals('12345', $concert->zip);
             self::assertEquals(3250, $concert->ticket_price);
+            self::assertEquals(75, $concert->ticket_quantity);
             self::assertEquals(75, $concert->ticketsRemaining());
         });
     }
