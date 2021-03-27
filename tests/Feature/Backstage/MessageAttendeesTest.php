@@ -75,4 +75,78 @@ class MessageAttendeesTest extends TestCase
         self::assertEquals('My subject', $message->subject);
         self::assertEquals('My message', $message->message);
     }
+
+    /** @test */
+    public function a_promoter_cannot_send_a_new_message_for_other_concerts(): void
+    {
+        $user = factory(User::class)->create();
+        $otherUser = factory(User::class)->create();
+        $concert = ConcertFactory::createPublished([
+            'user_id' => $otherUser->id,
+        ]);
+
+        $response = $this->actingAs($user)->post("/backstage/concerts/{$concert->id}/messages", [
+            'subject' => 'My subject',
+            'message' => 'My message',
+        ]);
+
+        $response->assertStatus(404);
+        self::assertEquals(0, AttendeeMessage::count());
+    }
+
+    /** @test */
+    public function a_guest_cannot_send_a_new_message_for_any_concerts(): void
+    {
+        $concert = ConcertFactory::createPublished();
+
+        $response = $this->post("/backstage/concerts/{$concert->id}/messages", [
+            'subject' => 'My subject',
+            'message' => 'My message',
+        ]);
+
+        $response->assertRedirect('/login');
+        self::assertEquals(0, AttendeeMessage::count());
+    }
+
+    /** @test */
+    public function subject_is_required(): void
+    {
+        $user = factory(User::class)->create();
+        $concert = ConcertFactory::createPublished([
+            'user_id' => $user->id,
+        ]);
+
+        $response = $this->from("/backstage/concerts/{$concert->id}/messages/new")
+            ->actingAs($user)
+            ->post("/backstage/concerts/{$concert->id}/messages", [
+                'subject' => '',
+                'message' => 'My message',
+            ]);
+
+        $response->assertRedirect("/backstage/concerts/{$concert->id}/messages/new");
+
+        $response->assertSessionHasErrors('subject');
+        self::assertEquals(0, AttendeeMessage::count());
+    }
+
+    /** @test */
+    public function message_is_required(): void
+    {
+        $user = factory(User::class)->create();
+        $concert = ConcertFactory::createPublished([
+            'user_id' => $user->id,
+        ]);
+
+        $response = $this->from("/backstage/concerts/{$concert->id}/messages/new")
+            ->actingAs($user)
+            ->post("/backstage/concerts/{$concert->id}/messages", [
+                'subject' => 'My subject',
+                'message' => '',
+            ]);
+
+        $response->assertRedirect("/backstage/concerts/{$concert->id}/messages/new");
+
+        $response->assertSessionHasErrors('message');
+        self::assertEquals(0, AttendeeMessage::count());
+    }
 }
