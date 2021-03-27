@@ -24,4 +24,9 @@ class ConcertFactory
             $concert->publish();
         });
     }
+
+    public static function createUnpublished($overrides = [])
+    {
+        return factory(Concert::class)->states('unpublished')->create($overrides);
+    }
 }
