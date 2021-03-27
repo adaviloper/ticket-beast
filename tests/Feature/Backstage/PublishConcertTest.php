@@ -47,7 +47,7 @@ class PublishConcertTest extends TestCase
             'concert_id' => $concert->id,
         ]);
 
-        // $response->assertStatus(422);
+        $response->assertStatus(422);
         self::assertEquals(3, $concert->fresh()->ticketsRemaining());
     }
 }
