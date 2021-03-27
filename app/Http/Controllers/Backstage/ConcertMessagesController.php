@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backstage;
 
 use App\AttendeeMessage;
+use App\Jobs\SendAttendeeMessage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,8 @@ class ConcertMessagesController extends Controller
         ]);
 
         $message = $concert->attendeeMessages()->create(request(['subject', 'message']));
+
+        SendAttendeeMessage::dispatch($message);
 
         return redirect()
             ->route('backstage.concert-messages.new', $concert)
