@@ -24,7 +24,7 @@ class ViewPublishedConcertOrdersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('backstage.published-concert-orders.index');
-        $this->assertTrue($response->data('concert')->is($concert));
+        self::assertTrue($response->data('concert')->is($concert));
     }
 
     /** @test */

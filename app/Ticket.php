@@ -24,6 +24,11 @@ class Ticket extends Model
             ->whereNull('reserved_at');
     }
 
+    public function scopeSold($query)
+    {
+        return $query->whereNotNull('order_id');
+    }
+
     public function getPriceAttribute()
     {
         return $this->concert->ticket_price;
