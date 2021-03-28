@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('', static function () {
-    return 'Laravel';
-});
-
 Route::get('concerts/{id}', 'ConcertsController@show')->name('concerts.show');
 Route::post('concerts/{id}/orders', 'ConcertOrdersController@store');
 Route::get('orders/{confirmationNumber}', 'OrdersController@show');
@@ -22,6 +18,8 @@ Route::get('orders/{confirmationNumber}', 'OrdersController@show');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('auth.show-login');
 Route::post('/login', 'Auth\LoginController@login')->name('auth.login');
 Route::post('/logout', 'Auth\LoginController@logout')->name('auth.logout');
+
+Route::get('invitations/{code}', 'InvitationsController@show')->name('invitations.show');
 
 Route::group(['middleware' => ['auth'], 'namespace' => 'Backstage', 'prefix' => 'backstage'], static function () {
     Route::get('concerts', 'ConcertsController@index')->name('backstage.concerts.index');
