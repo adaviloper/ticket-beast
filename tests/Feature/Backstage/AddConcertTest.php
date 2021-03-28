@@ -381,7 +381,7 @@ class AddConcertTest extends TestCase
         $this->disableExceptionHandling();
         Storage::fake();
         $user = factory(User::class)->create();
-        $file = File::image('concert-poster.png');
+        $file = File::image('concert-poster.png', 850, 1100);
 
         $response = $this->actingAs($user)->post('/backstage/concerts', $this->validParams([
             'poster_image' => $file,
@@ -395,5 +395,59 @@ class AddConcertTest extends TestCase
                 Storage::path($concert->poster_image_path)
             );
         });
+    }
+
+    /** @test */
+    public function poster_image_must_be_an_image(): void
+    {
+        Storage::fake();
+        $user = factory(User::class)->create();
+        $file = File::image('not-a-poster.pdf');
+
+        $response = $this->actingAs($user)
+            ->from('/backstage/concerts/new')
+            ->post('/backstage/concerts', $this->validParams([
+                'poster_image' => $file,
+            ]));
+
+        $response->assertRedirect('/backstage/concerts/new');
+        $response->assertSessionHasErrors('poster_image');
+        self::assertEquals(0, Concert::count());
+    }
+
+    /** @test */
+    public function poster_image_must_be_at_least_400px_wide(): void
+    {
+        Storage::fake();
+        $user = factory(User::class)->create();
+        $file = File::image('poster.png', 399, 516);
+
+        $response = $this->actingAs($user)
+            ->from('/backstage/concerts/new')
+            ->post('/backstage/concerts', $this->validParams([
+                'poster_image' => $file,
+            ]));
+
+        $response->assertRedirect('/backstage/concerts/new');
+        $response->assertSessionHasErrors('poster_image');
+        self::assertEquals(0, Concert::count());
+    }
+
+    /** @test */
+    public function poster_image_must_have_letter_aspect_ratio(): void
+    {
+        Storage::fake();
+        $user = factory(User::class)->create();
+        $file = File::image('poster.png', 851, 1100);
+
+        $response = $this->actingAs($user)
+            ->from('/backstage/concerts/new')
+            ->post('/backstage/concerts', $this->validParams([
+                'poster_image' => $file,
+            ]));
+
+        $response->assertRedirect('/backstage/concerts/new');
+        $response->assertSessionHasErrors('poster_image');
+        self::assertEquals(0, Concert::count());
     }
 }
