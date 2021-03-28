@@ -5,10 +5,10 @@ namespace Tests\Feature\Backstage;
 use App\Concert;
 use App\User;
 use Carbon\Carbon;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class AddConcertTest extends TestCase
 {
@@ -373,5 +373,19 @@ class AddConcertTest extends TestCase
         $response->assertRedirect('/backstage/concerts/new');
         $response->assertSessionHasErrors('ticket_quantity');
         self::assertEquals(0, Concert::count());
+    }
+
+    /** @test */
+    public function poster_image_is_uploaded_if_included(): void
+    {
+        Storage::fake();
+        $user = factory(User::class)->create();
+
+        $response = $this->actingAs($user)->post('/backstage/concerts', $this->validParams([
+            'poster_image' => File::image('concert-poster.png'),
+        ]));
+
+        self::assertNotNull(Concert::first()->poster_image_path);
+        Storage::exists(Concert::first()->poster_image_path);
     }
 }
