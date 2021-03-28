@@ -14,7 +14,7 @@ class ViewOrderTest extends \Tests\TestCase
     /** @test */
     public function user_can_view_their_order_confirmation(): void
     {
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
         $concert = factory(Concert::class)->create([
             'date' => '2017-03-12 20:00:00',
             'venue' => 'The Mosh Pit',

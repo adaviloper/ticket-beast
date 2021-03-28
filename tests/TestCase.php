@@ -51,15 +51,4 @@ abstract class TestCase extends BaseTestCase
                 });
         });
     }
-
-    public function disableExceptionHandling()
-    {
-        $this->app->instance(ExceptionHandler::class, new class extends Handler {
-            public function __construct() {}
-            public function report(\Exception $exception) {}
-            public function render($request, \Exception $exception) {
-                throw $exception;
-            }
-        });
-    }
 }

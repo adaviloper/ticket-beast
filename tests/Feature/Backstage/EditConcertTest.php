@@ -50,7 +50,7 @@ class EditConcertTest extends TestCase
     /** @test */
     public function promoters_can_view_the_edit_form_for_their_own_unpublished_concerts(): void
     {
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
 
         /** @var User $user */
         $user = factory(User::class)->create();
@@ -130,7 +130,7 @@ class EditConcertTest extends TestCase
     /** @test */
     public function promoters_can_edit_their_own_unpublished_concerts(): void
     {
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
 
         $user = factory(User::class)->create();
         /** @var Concert $concert */
