@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
  * @mixin \Eloquent
  *
  * @property int $id
+ * @property string $poster_image_path
  */
 class Concert extends Model
 {

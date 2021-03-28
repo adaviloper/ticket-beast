@@ -37,7 +37,9 @@ class ProcessPosterImage implements ShouldQueue
     {
         $imageContents = Storage::get($this->concert->poster_image_path);
         $image = Image::make($imageContents);
-        $image->resize(600)->encode();
+        $image->resize(600, null, static function ($constraint) {
+            $constraint->aspectRatio();
+        })->limitColors(255)->encode();
         Storage::put($this->concert->poster_image_path, (string) $image);
     }
 }
