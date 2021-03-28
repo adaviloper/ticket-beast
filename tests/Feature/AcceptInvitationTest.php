@@ -74,4 +74,36 @@ class AcceptInvitationTest extends TestCase
         self::assertTrue(Hash::check('secret', $user->password));
         self::assertTrue($invitation->fresh()->user->is($user));
     }
+
+    /** @test */
+    public function registering_with_a_used_invitation(): void
+    {
+        $invitation = factory(Invitation::class)->create([
+            'user_id' => factory(User::class)->create(),
+            'code' => 'TEST_CODE_1234',
+        ]);
+        self::assertEquals(1, User::count());
+
+        $response = $this->post('register', [
+            'email' => self::JOHN_EMAIL,
+            'password' => 'secret',
+            'invitation_code' => 'TEST_CODE_1234',
+        ]);
+
+        $response->assertStatus(404);
+        self::assertEquals(1, User::count());
+    }
+
+    /** @test */
+    public function registering_with_an_invitation_code_that_does_not_exist(): void
+    {
+        $response = $this->post('register', [
+            'email' => self::JOHN_EMAIL,
+            'password' => 'secret',
+            'invitation_code' => 'TEST_CODE_1234',
+        ]);
+
+        $response->assertStatus(404);
+        self::assertEquals(0, User::count());
+    }
 }
