@@ -5,6 +5,7 @@ namespace App;
 use App\Exceptions\NotEnoughTicketsException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @mixin \Eloquent
@@ -144,5 +145,15 @@ class Concert extends Model
         }
 
         return $tickets;
+    }
+
+    public function hasPoster(): bool
+    {
+        return $this->post_image_path !== null;
+    }
+
+    public function posterUrl(): string
+    {
+        return Storage::url($this->poster_image_path);
     }
 }
