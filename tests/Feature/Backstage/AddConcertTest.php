@@ -381,6 +381,7 @@ class AddConcertTest extends TestCase
     public function poster_image_is_uploaded_if_included(): void
     {
         $this->disableExceptionHandling();
+        Event::fake(ConcertAdded::class);
         Storage::fake();
         $user = factory(User::class)->create();
         $file = File::image('concert-poster.png', 850, 1100);
@@ -389,7 +390,7 @@ class AddConcertTest extends TestCase
             'poster_image' => $file,
         ]));
 
-        tap(Concert::first(), static function ($concert) use ($file) {
+        tap(Concert::first(), static function (Concert $concert) use ($file) {
             self::assertNotNull($concert->poster_image_path);
             Storage::exists($concert->poster_image_path);
             self::assertFileEquals(
