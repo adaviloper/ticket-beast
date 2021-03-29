@@ -19,10 +19,10 @@ class AcceptInvitationTest extends TestCase
         $this->withoutExceptionHandling();
         $invitation = factory(Invitation::class)->create([
             'user_id' => null,
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
-        $response = $this->get('invitations/TEST_CODE_1234');
+        $response = $this->get('invitations/' . self::INVITATION_CODE);
 
         $response->assertStatus(200);
         $response->assertViewIs('invitations.show');
@@ -34,10 +34,10 @@ class AcceptInvitationTest extends TestCase
     {
         $invitation = factory(Invitation::class)->create([
             'user_id' => factory(User::class)->create(),
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
-        $response = $this->get('invitations/TEST_CODE_1234');
+        $response = $this->get('invitations/' . self::INVITATION_CODE);
 
         $response->assertStatus(404);
     }
@@ -45,7 +45,7 @@ class AcceptInvitationTest extends TestCase
     /** @test */
     public function viewing_an_invitation_that_does_not_exist(): void
     {
-        $response = $this->get('invitations/TEST_CODE_1234');
+        $response = $this->get('invitations/' . self::INVITATION_CODE);
 
         $response->assertStatus(404);
     }
@@ -56,13 +56,13 @@ class AcceptInvitationTest extends TestCase
         $this->withoutExceptionHandling();
         $invitation = factory(Invitation::class)->create([
             'user_id' => null,
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
         $response = $this->post('register', [
             'email' => self::JOHN_EMAIL,
             'password' => 'secret',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
         $response->assertRedirect('backstage/concerts');
@@ -80,14 +80,14 @@ class AcceptInvitationTest extends TestCase
     {
         $invitation = factory(Invitation::class)->create([
             'user_id' => factory(User::class)->create(),
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
         self::assertEquals(1, User::count());
 
         $response = $this->post('register', [
             'email' => self::JOHN_EMAIL,
             'password' => 'secret',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
         $response->assertStatus(404);
@@ -100,7 +100,7 @@ class AcceptInvitationTest extends TestCase
         $response = $this->post('register', [
             'email' => self::JOHN_EMAIL,
             'password' => 'secret',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
         $response->assertStatus(404);
@@ -112,16 +112,16 @@ class AcceptInvitationTest extends TestCase
     {
         $invitation = factory(Invitation::class)->create([
             'user_id' => null,
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
-        $response = $this->from('invitations/TEST_CODE_1234')->post('register', [
+        $response = $this->from('invitations/' . self::INVITATION_CODE)->post('register', [
             'email' => '',
             'password' => 'secret',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
-        $response->assertRedirect('/invitations/TEST_CODE_1234');
+        $response->assertRedirect('invitations/' . self::INVITATION_CODE);
         $response->assertSessionHasErrors('email');
         self::assertEquals(0, User::count());
     }
@@ -131,16 +131,16 @@ class AcceptInvitationTest extends TestCase
     {
         $invitation = factory(Invitation::class)->create([
             'user_id' => null,
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
-        $response = $this->from('invitations/TEST_CODE_1234')->post('register', [
+        $response = $this->from('invitations/' . self::INVITATION_CODE)->post('register', [
             'email' => 'not-an-email',
             'password' => 'secret',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
-        $response->assertRedirect('/invitations/TEST_CODE_1234');
+        $response->assertRedirect('invitations/' . self::INVITATION_CODE);
         $response->assertSessionHasErrors('email');
         self::assertEquals(0, User::count());
     }
@@ -151,16 +151,16 @@ class AcceptInvitationTest extends TestCase
         $existingUser = factory(User::class)->create(['email' => self::JOHN_EMAIL]);
         $invitation = factory(Invitation::class)->create([
             'user_id' => null,
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
-        $response = $this->from('invitations/TEST_CODE_1234')->post('register', [
+        $response = $this->from('invitations/' . self::INVITATION_CODE)->post('register', [
             'email' => self::JOHN_EMAIL,
             'password' => 'secret',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
-        $response->assertRedirect('/invitations/TEST_CODE_1234');
+        $response->assertRedirect('invitations/' . self::INVITATION_CODE);
         $response->assertSessionHasErrors('email');
         self::assertEquals(1, User::count());
     }
@@ -170,16 +170,16 @@ class AcceptInvitationTest extends TestCase
     {
         $invitation = factory(Invitation::class)->create([
             'user_id' => null,
-            'code' => 'TEST_CODE_1234',
+            'code' => self::INVITATION_CODE,
         ]);
 
-        $response = $this->from('invitations/TEST_CODE_1234')->post('register', [
+        $response = $this->from('invitations/' . self::INVITATION_CODE)->post('register', [
             'email' => self::JOHN_EMAIL,
             'password' => '',
-            'invitation_code' => 'TEST_CODE_1234',
+            'invitation_code' => self::INVITATION_CODE,
         ]);
 
-        $response->assertRedirect('/invitations/TEST_CODE_1234');
+        $response->assertRedirect('invitations/' . self::INVITATION_CODE);
         $response->assertSessionHasErrors('password');
         self::assertEquals(0, User::count());
     }

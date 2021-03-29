@@ -19,6 +19,8 @@ abstract class TestCase extends BaseTestCase
     public const GOOD_ORDER_CONFIRMATION_NUMBER = 'ORDERCONFIRMATION1234';
     public const BAD_ORDER_CONFIRMATION_NUMBER = 'ORDERCONFIRMATION1234';
 
+    public const INVITATION_CODE = 'TEST_CODE_1234';
+
     /**
      * The base URL to use while testing the application.
      *
