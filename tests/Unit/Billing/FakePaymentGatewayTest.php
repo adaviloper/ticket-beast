@@ -31,4 +31,16 @@ class FakePaymentGatewayTest extends TestCase
         self::assertEquals(1, $timesCallbackRan);
         self::assertEquals(5000, $paymentGateway->totalCharges());
     }
+
+    /** @test */
+    public function can_get_total_charges_for_a_specific_account(): void
+    {
+        $paymentGateway = new FakePaymentGateway();
+
+        $paymentGateway->charge(1000, $paymentGateway->getValidTestToken(), 'test_acct_0000');
+        $paymentGateway->charge(2500, $paymentGateway->getValidTestToken(), self::TEST_STRIPE_ACCOUNT);
+        $paymentGateway->charge(4000, $paymentGateway->getValidTestToken(), self::TEST_STRIPE_ACCOUNT);
+
+        self::assertEquals(6500, $paymentGateway->totalChargesFor(self::TEST_STRIPE_ACCOUNT));
+    }
 }

@@ -63,5 +63,6 @@ trait PaymentGatewayContractTests
 
         self::assertEquals(substr($paymentGateway::TEST_CARD_NUMBER, -4), $charge->cardLastFour());
         self::assertEquals(2500, $charge->amount());
+        self::assertEquals('test_acct_1234', $charge->destination());
     }
 }

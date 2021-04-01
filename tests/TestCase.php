@@ -21,6 +21,8 @@ abstract class TestCase extends BaseTestCase
 
     public const INVITATION_CODE = 'TEST_CODE_1234';
 
+    public const TEST_STRIPE_ACCOUNT = 'test_acct_1234';
+
     /**
      * The base URL to use while testing the application.
      *
