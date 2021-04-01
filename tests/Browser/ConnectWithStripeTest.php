@@ -26,7 +26,19 @@ class ConnectWithStripeTest extends DuskTestCase
                 ->assertQueryStringHas('response_type', 'code')
                 ->assertQueryStringHas('scope', 'read_write')
                 ->assertQueryStringHas('client_id', config('services.stripe.client_id'))
-            ;
+                ->press('Skip this form')
+                ->waitForReload()
+                ->assertRouteIs('backstage.concerts.index');
+
+            tap($user->fresh(), static function ($user) {
+                self::assertNotNull($user->stripe_account_id);
+                self::assertNotNull($user->stripe_access_token);
+
+                $connectedAccount = \Stripe\Account::retrieve(null, [
+                    'api_key' => $user->stripe_access_token
+                ]);
+                self::assertEquals($connectedAccount->id, $user->stripe_account_id);
+            });
         });
     }
 }
