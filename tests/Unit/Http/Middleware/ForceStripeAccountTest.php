@@ -31,5 +31,27 @@ class ForceStripeAccountTest extends TestCase
         $response->assertRedirect(route('backstage.stripe-connect.connect'));
     }
 
+    /** @test */
+    public function user_with_a_stripe_can_continue(): void
+    {
+        $this->be(factory(User::class)->create([
+            'stripe_account_id' => 'test_stripe_account_1234',
+        ]));
 
+        $request = new Request;
+        $next = new class {
+            public $called = false;
+            public function __invoke($request)
+            {
+                $this->called = true;
+                return $request;
+            }
+        };
+        $middleware = new ForceStripeAccount;
+
+        $response = $middleware->handle($request, $next);
+
+        self::assertTrue($next->called);
+        self::assertSame($request, $response);
+    }
 }
