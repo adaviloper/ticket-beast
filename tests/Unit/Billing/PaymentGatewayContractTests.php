@@ -15,7 +15,7 @@ trait PaymentGatewayContractTests
         $paymentGateway = $this->getPaymentGateway();
 
         $newCharges = $paymentGateway->newChargesDuring(static function ($paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken(), TestCase::TEST_STRIPE_ACCOUNT);
+            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken(), env('STRIPE_TEST_PROMOTER_ID'));
         });
 
         self::assertCount(1, $newCharges);
@@ -26,12 +26,12 @@ trait PaymentGatewayContractTests
     public function can_fetch_charges_created_during_a_callback()
     {
         $paymentGateway = $this->getPaymentGateway();
-        $paymentGateway->charge(2000, $paymentGateway->getValidTestToken(), Testcase::TEST_STRIPE_ACCOUNT);
-        $paymentGateway->charge(3000, $paymentGateway->getValidTestToken(), TestCase::TEST_STRIPE_ACCOUNT);
+        $paymentGateway->charge(2000, $paymentGateway->getValidTestToken(), env('STRIPE_TEST_PROMOTER_ID'));
+        $paymentGateway->charge(3000, $paymentGateway->getValidTestToken(), env('STRIPE_TEST_PROMOTER_ID'));
 
         $newCharges = $paymentGateway->newChargesDuring(static function ($paymentGateway) {
-            $paymentGateway->charge(4000, $paymentGateway->getValidTestToken(), TestCase::TEST_STRIPE_ACCOUNT);
-            $paymentGateway->charge(5000, $paymentGateway->getValidTestToken(), TestCase::TEST_STRIPE_ACCOUNT);
+            $paymentGateway->charge(4000, $paymentGateway->getValidTestToken(), env('STRIPE_TEST_PROMOTER_ID'));
+            $paymentGateway->charge(5000, $paymentGateway->getValidTestToken(), env('STRIPE_TEST_PROMOTER_ID'));
         });
 
         self::assertCount(2, $newCharges);
@@ -45,7 +45,7 @@ trait PaymentGatewayContractTests
 
         $newCharges = $paymentGateway->newChargesDuring(static function ($paymentGateway) {
             try {
-                $paymentGateway->charge(2500, 'invalid-payment-token', TestCase::TEST_STRIPE_ACCOUNT);
+                $paymentGateway->charge(2500, 'invalid-payment-token', env('STRIPE_TEST_PROMOTER_ID'));
             } catch (PaymentFailedException $exception) {
                 return;
             }
@@ -60,10 +60,10 @@ trait PaymentGatewayContractTests
     {
         $paymentGateway = $this->getPaymentGateway();
 
-        $charge = $paymentGateway->charge(2500, $paymentGateway->getValidTestToken($paymentGateway::TEST_CARD_NUMBER), TestCase::TEST_STRIPE_ACCOUNT);
+        $charge = $paymentGateway->charge(2500, $paymentGateway->getValidTestToken($paymentGateway::TEST_CARD_NUMBER), env('STRIPE_TEST_PROMOTER_ID'));
 
         self::assertEquals(substr($paymentGateway::TEST_CARD_NUMBER, -4), $charge->cardLastFour());
         self::assertEquals(2500, $charge->amount());
-        self::assertEquals('test_acct_1234', $charge->destination());
+        self::assertEquals(env('STRIPE_TEST_PROMOTER_ID'), $charge->destination());
     }
 }
